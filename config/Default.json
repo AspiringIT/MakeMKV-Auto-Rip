@@ -4,11 +4,11 @@
             "Dir": "C:\\Program Files (x86)\\MakeMKV"
         },
         "movieRips": {
-            "Dir": "C:\\"
+            "Dir": "E:\\Jellyfin\\Movies"
         },
         "logToFiles": {
             "Enabled": "true",
-            "Dir": "C:\\"
+            "Dir": "E:\\Jellyfin\\AutoRip logs"
         },
         "ejectDVDs": {
             "Enabled": "true"
