@@ -10,7 +10,6 @@ const eject = config.get("Path.ejectDVDs.Enabled").toLowerCase();
 const makeMKV = '"' + mkvDir + "\\makemkvcon.exe" + '"';
 const exec = require("child_process").exec;
 const fs = require("fs");
-const winEject = require("win-eject");
 var goodVideoArray = [];
 var badVideoArray = [];
 colors = require("colors/safe");
@@ -503,16 +502,37 @@ function ripDVDs(outputPath) {
 }
 
 function ejectDVDs() {
-  if (eject == "true") {
-    winEject.eject("", function () {
-      console.info(
-        colors.time(moment().format("LTS")) +
-          colors.dash(" - ") +
-          colors.info("All DVDs have been ejected.")
-      );
+  if (eject === "true") {
+    const ejectCommand =
+      process.platform === 'win32'
+        ? 'powershell -Command "(New-Object -comObject \\"Shell.Application\\").Namespace(17).ParseName(\\"D:\\").InvokeVerb(\\"Eject\\")"'
+        : process.platform === 'darwin'
+        ? 'drutil eject'
+        : 'eject';
+
+    exec(ejectCommand, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+
+      // Print a message after discs have been ejected
+      console.log('All DVDs have been ejected.');
+
+      // Exit the program after ejecting the discs
       process.exit();
     });
   } else {
+    console.log(
+      colors.time(moment().format("LTS")) +
+        colors.dash(" - ") +
+        colors.info("Eject DVDs is disabled.")
+    );
     process.exit();
   }
 }
