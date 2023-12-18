@@ -1,0 +1,19 @@
+const { exec } = require('child_process');
+
+// Eject disc command based on the OS
+const ejectCommand = process.platform === 'win32' ? 'powershell -Command "(New-Object -comObject "Shell.Application").Namespace(17).ParseName(\"D:\").InvokeVerb(\"Eject\")"' : 
+                    process.platform === 'darwin' ? 'drutil eject' :
+                    'eject';
+
+// Execute the command to eject disc
+exec(ejectCommand, (error, stdout, stderr) => {
+  if (error) {
+    console.error(`Error: ${error.message}`);
+    return;
+  }
+  if (stderr) {
+    console.error(`stderr: ${stderr}`);
+    return;
+  }
+  console.log(`stdout: ${stdout}`);
+});
