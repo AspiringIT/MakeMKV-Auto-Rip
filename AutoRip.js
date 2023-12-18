@@ -12,7 +12,6 @@ const exec = require("child_process").exec;
 const fs = require("fs");
 var goodVideoArray = [];
 var badVideoArray = [];
-const { exec } = require('child_process');
 colors = require("colors/safe");
 
 //Color theme settings for colored text
