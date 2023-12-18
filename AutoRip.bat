@@ -1,2 +1,2 @@
 node AutoRip.js
-exit
+pause 
