@@ -163,33 +163,32 @@ function validateDriveFileDate() {
 }
 
 function getDriveInfo(data) {
-  var validationMessage = validateDriveFileDate(data);
-  if (validationMessage) {
-    return validationMessage;
-  }
-
   var lines = data.split("\n");
-  var validLines = lines
-    .filter((line) => {
-      //Get array of line attributes
-      var lineArray = line.split(",");
+  var validLines = lines.filter((line) => {
+    var lineArray = line.split(",");
+    if (lineArray[0].startsWith("DRV:")) {
+      return lineArray[1] == 2; // Ensure that the number in the second element is = 2, indicating media presence
+    }
+  }).map((line) => {
+    var driveNumber = line.split(",")[0].substring(4); // Extracting the drive number
+    var title = line.split(",")[5];
 
-      //make sure that the first element starts with "DRV:"
-      if (lineArray[0].startsWith("DRV:")) {
-        //Ensure that the number in the second element is = 2...meaning we have media
-        return lineArray[1] == 2;
-      }
-    })
-    .map((line) => {
-      var driveInfo = {
-        driveNumber: line.split(",")[0].substring(4),
-        title: makeTitleValidFolderPath(line.split(",")[5]),
-      };
-      return driveInfo;
-    });
+    var driveInfo = {
+      driveNumber: driveNumber,
+      title: makeTitleValidFolderPath(title),
+    };
+    return driveInfo;
+  });
+
+  // Sorting the drives by the specified order: '1', '0', '2'
+  validLines.sort((a, b) => {
+    const order = { '1': 0, '0': 1, '2': 2 };
+    return order[a.driveNumber] - order[b.driveNumber];
+  });
 
   return validLines;
 }
+
 
 function getFileNumber(data) {
   var myTitleSectionValue = null,
